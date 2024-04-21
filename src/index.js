@@ -74,8 +74,3 @@ server.on("upgrade", (req, socket, head) => {
   }
 });
 
-process.on("SIGINT", () => {
-  console.log("\x1b[0m");
-  server.close();
-  process.exit();
-});
