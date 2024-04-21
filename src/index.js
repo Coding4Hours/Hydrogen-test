@@ -37,9 +37,8 @@ server.on("upgrade", (req, socket, head) => {
     socket.end();
 });
 
-let port = parseInt(process.env.PORT || "");
+let port = parseInt(process.env.PORT || "8080");
 
-if (isNaN(port)) port = 8080;
 
 server.on("listening", () => {
   const address = server.address();
@@ -55,16 +54,30 @@ server.on("listening", () => {
   );
 });
 
-// https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
-
-function shutdown() {
-  console.log("SIGTERM signal received: closing HTTP server");
-  server.close();
-  process.exit(0);
-}
-
 server.listen({
   port,
+});
+
+const server = createServer();
+
+server.on("request", (req, res) => {
+  if (bare.shouldRoute(req)) {
+    bare.routeRequest(req, res);
+  } else {
+    app(req, res);
+  }
+});
+
+server.on("upgrade", (req, socket, head) => {
+  if (req.url.endsWith("/wisp/")) {
+    wisp.routeRequest(req, socket, head);
+  } else if (req.url.endsWith("/bare")) {
+    bare.routeUpgrade(req, socket, head);
+  }
+});
+
+process.on("SIGINT", () => {
+  console.log("\x1b[0m");
+  server.close();
+  process.exit();
 });
