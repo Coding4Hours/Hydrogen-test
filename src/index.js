@@ -58,7 +58,6 @@ server.listen({
   port,
 });
 
-const server = createServer();
 
 server.on("request", (req, res) => {
   if (bare.shouldRoute(req)) {
