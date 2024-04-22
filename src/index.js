@@ -39,19 +39,8 @@ server.on("upgrade", (req, socket, head) => {
 let port = parseInt(process.env.PORT || "8080");
 
 
-server.on("listening", () => {
-  const address = server.address();
 
-  // by default we are listening on 0.0.0.0 (every interface)
-  // we just need to list a few
-  console.log("Listening on:");
-  console.log(`\thttp://localhost:${address.port}`);
-  console.log(`\thttp://${hostname()}:${address.port}`);
-  console.log(
-    `\thttp://${address.family === "IPv6" ? `[${address.address}]` : address.address
-    }:${address.port}`
-  );
-});
+
 
 server.listen({
   port,
@@ -73,4 +62,3 @@ server.on("upgrade", (req, socket, head) => {
     bare.routeUpgrade(req, socket, head);
   }
 });
-
